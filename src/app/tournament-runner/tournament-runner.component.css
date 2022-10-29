@@ -1,0 +1,89 @@
+.content {
+    width: 800px;
+    margin: 5px auto;
+}
+
+.tournament-name {
+    text-align: center;
+    padding: 20px;
+    font-size: 2em;
+}
+
+.groups {
+    width: 500px;
+    display: inline-block;
+}
+
+.control-panel {
+    vertical-align: top;
+    display: inline-block;
+    width: 250px;
+    padding: 10px;
+    margin-left: 10px;
+    border: 1px solid black;
+}
+
+.control-panel-title {
+    font-size: 1.3em;
+    text-align: center;
+    width: 100%;
+}
+
+.control-panel-message {
+    text-align: center;
+    min-height: 30px;
+    width: 100%;
+}
+
+.control-panel-buttons {
+    text-align: center;
+    min-height: 50px;
+    width: 100%;
+}
+
+.control-panel-buttons mat-icon {
+    font-size: 3em;
+    width: 40px;
+    margin: 0 10px;
+}
+
+.entry {
+    border: 1px solid black;
+    height: 75px;
+    padding: 10px;
+}
+
+mat-panel-title {
+    text-align: center;
+    display: block !important;
+}
+
+.group-selected mat-expansion-panel-header {
+    background-color: #7FBF3F;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.entry-selected {
+    background-color: #7FBF3F;
+}
+
+.entry-selected .entry-name {
+    font-weight: bold;
+}
+
+.entry-name {
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.entry-time-row {}
+
+.entry-icons {
+    float: right;
+    display: block;
+}
+
+.entry-time-beginEvent {}
+
+.entry-time-endEvent {}

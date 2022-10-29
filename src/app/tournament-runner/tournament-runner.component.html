@@ -1,0 +1,49 @@
+<div *ngIf="tournament && day" class="content">
+    <div class="tournament-name">{{tournament.name}}</div>
+    <mat-form-field>
+        <mat-select placeholder="Day" [value]="day">
+            <mat-option *ngFor="let d of tournament.days" [value]="d">
+                {{d.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>
+        <div class="groups">
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let group of day.groups; index as groupIdx" class="group {{ groupIdx === currentGroupEntryIdx ? 'group-selected' : '' }}" #groups>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>{{ group.groupName }}</mat-panel-title>
+                        <span *ngIf="groupIdx !== currentGroupEntryIdx" style="margin-right: 40px;">
+                            <mat-icon (click)="playGroup(groupIdx, $event)">play_arrow</mat-icon>
+                        </span>
+                    </mat-expansion-panel-header>
+                    <mat-list class="entries">
+                        <mat-list-item *ngFor="let entry of group.entries; index as entryIdx" class="entry {{ groupIdx == currentGroupEntryIdx && entryIdx == currentEntryIdx ? 'entry-selected' : '' }}">
+                            <div style="width: 100%;">
+                                <div class="entry-time-row">{{entry.beginTime | date : 'hh:mm'}} to {{entry.endTime | date : 'hh:mm'}}: {{entry.name}}</div>
+                                <div class="entry-events-row">
+                                    <span *ngIf="entry.beginEvent" class="entry-time-beginEvent">{{entry.beginEvent.name}}</span> - <span *ngIf="entry.endEvent" class="entry-time-endEvent">{{entry.endEvent.name}}</span>
+                                </div>
+                            </div>
+                            <div class="entry-icons">
+                                <mat-icon *ngIf="groupIdx !== currentGroupEntryIdx || entryIdx !== currentEntryIdx" (click)="playEntry(groupIdx, entryIdx)" [inline]="true">play_arrow</mat-icon>
+                                <mat-icon *ngIf="groupIdx == currentGroupEntryIdx && entryIdx === currentEntryIdx && playing" (click)="stopEntry()" [inline]="true">stop</mat-icon>
+                            </div>
+                        </mat-list-item>
+                    </mat-list>
+
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+        <div class="control-panel" style="margin-top: {{ currentGroupEntryIdx * 50 }}px;">
+            <div class="control-panel-title">Control Panel</div>
+            <div class="control-panel-message">{{message}}</div>
+            <div class="control-panel-buttons">
+                <mat-icon (click)="previousEntry()" style="margin-right: 10px;" [inline]="true">fast_rewind</mat-icon>
+                <mat-icon *ngIf="!playing" (click)="playEntry()" [inline]="true">play_arrow</mat-icon>
+                <mat-icon *ngIf="playing" (click)="stopEntry()" [inline]="true">stop</mat-icon>
+                <mat-icon (click)="nextEntry()" [inline]="true">fast_forward</mat-icon>
+            </div>
+        </div>
+    </div>
+</div>
