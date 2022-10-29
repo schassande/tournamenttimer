@@ -11,11 +11,15 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
+import { TournamentEditorComponent } from './tournament-editor/tournament-editor.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TournamentRunnerComponent
+    TournamentRunnerComponent,
+    TournamentEditorComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { TournamentService } from '../tournament-service';
-import {Tournament, TournamentDay } from '../tournament-model';
+import {DayEntry, Event, Tournament, TournamentDay } from '../tournament-model';
 import {MatExpansionPanel} from '@angular/material/expansion';
 
 @Component({
@@ -12,11 +12,19 @@ export class TournamentRunnerComponent implements OnInit {
 
   tournament: Tournament|undefined;
   day: TournamentDay|undefined;
+  entry: DayEntry|undefined;
   currentGroupEntryIdx = -1;
   currentEntryIdx = -1;
   playing = false;
+  pausing = false;
   message = '';
+  elaspedTime= 0;
+  remainingTime = 0;
   @ViewChildren('groups') groups: QueryList<MatExpansionPanel>|undefined
+  interval: any;
+  timeout: any;
+  audio: HTMLAudioElement = new Audio();
+  eventMessage: string|undefined;
 
   constructor(private tournamentService: TournamentService) { }
 
@@ -25,14 +33,16 @@ export class TournamentRunnerComponent implements OnInit {
     this.tournament = this.tournamentService.getCurrentTournament();
     if (this.tournament) {
       this.day = this.tournament.days[0];
-      if (this.day && this.day.groups && this.day.groups.length) {
-        this.currentGroupEntryIdx = 0;
-        this.computeEntryIndex();
-      }
+      this.computeGroupIndex();
     } else {
       console.log('No tournament')
     }
-    this.onlyCurrentExpanded();
+  }
+  computeGroupIndex() {
+    if (this.day && this.day.groups && this.day.groups.length) {
+      this.currentGroupEntryIdx = 0;
+      this.computeEntryIndex();
+    }
   }
   computeEntryIndex() {
     if (this.day && this.day.groups[this.currentGroupEntryIdx] 
@@ -41,8 +51,15 @@ export class TournamentRunnerComponent implements OnInit {
       this.currentEntryIdx = 0;
     }
   }
+  dayChange(newDay:TournamentDay) {
+    console.log("Day=" + this.day?.name, JSON.stringify(event));
+    this.stopEntry();
+    this.day = newDay;
+    this.computeGroupIndex();
+  }
   playGroup(groupIdx: number, event: any) {
     event.stopPropagation();
+    this.stopEntry();
     this.currentGroupEntryIdx = groupIdx; 
     this.computeEntryIndex();
     this.playEntry();
@@ -51,6 +68,7 @@ export class TournamentRunnerComponent implements OnInit {
   previousGroup() {
     if (!this.day) return;
     if (this.currentGroupEntryIdx > 0) {
+      this.stopEntry();
       this.currentGroupEntryIdx--;
       this.computeEntryIndex();
       this.playEntry();
@@ -59,6 +77,7 @@ export class TournamentRunnerComponent implements OnInit {
   nextGroup() {
     if (!this.day) return;
     if (this.currentGroupEntryIdx < this.day.groups.length -1) {
+      this.stopEntry();
       this.currentGroupEntryIdx++;
       this.computeEntryIndex();
       this.playEntry();
@@ -89,24 +108,94 @@ export class TournamentRunnerComponent implements OnInit {
     this.currentGroupEntryIdx = groupIdx;
     this.currentEntryIdx = entryIdx;
     if (!this.day) return;
+    this.entry = this.day.groups[this.currentGroupEntryIdx].entries[this.currentEntryIdx]
     this.playing = true;
-    this.message = this.day.groups[this.currentGroupEntryIdx].entries[this.currentEntryIdx].name;
-    this.onlyCurrentExpanded();
+    if (!this.pausing) {
+      this.message = this.entry.name;
+      this.onlyCurrentExpanded();
+      this.elaspedTime= 0;
+      this.remainingTime = this.entry.duration * 60;
+    }
+    clearInterval(this.interval);
+    this.interval = setInterval(this.updateTime.bind(this), 1000);
+    if (this.entry.beginEvent) {
+      this.showEventMessage(this.entry.beginEvent.text);
+      if (this.entry.beginEvent.soundFile) {
+        this.stopAudio();
+        this.playAudio(this.entry.beginEvent.soundFile, this.entry.duration * 60);
+      }
+    }
+
+  }
+  updateTime() {
+    if (this.playing && this.remainingTime > 0) {
+      this.remainingTime--;
+      this.elaspedTime++;
+      if (this.remainingTime <= 0) {
+        this.playing = false;
+        if (this.entry?.endEvent) {
+          this.showEventMessage(this.entry.endEvent.text);
+          if (this.entry.endEvent.soundFile) {
+            this.stopAudio();
+            this.playAudio(this.entry.endEvent.soundFile);
+          }
+        }
+        this.nextEntry();
+      }
+    }
   }
   onlyCurrentExpanded() {
-    console.log('currentGroupEntryIdx='+this.currentGroupEntryIdx)
-    console.log('groups:' + this.groups)
     this.groups?.forEach((g,idx) => {
-      console.log('groups['+idx+'].isOpen' + g.expanded)
       if (idx === this.currentGroupEntryIdx) {
-        g.open();
+        if (!g.expanded) g.open();
       } else {
-        g.close()
+        if (g.expanded) g.close()
       }
     })
   }
   stopEntry() {
     this.playing = false;
+    this.pausing = false;
     this.message = '';
+    this.remainingTime = 0;
+    this.elaspedTime = 0;
+    clearInterval(this.interval);
+    this.interval = undefined;
+    this.stopAudio();
+}
+  pauseEntry() {
+    this.pausing = true;
+    this.playing = false;
+    clearInterval(this.interval);
+    this.interval = undefined;
+    this.stopAudio();
+  }
+  stopAudio() {
+    if (this.timeout) clearTimeout(this.timeout);
+    this.audio.pause();
+  }
+  playAudio(fileName: string, timeout: number|undefined = undefined) {
+    this.stopAudio();
+    this.audio.src = fileName;
+    this.audio.load();
+    this.audio.play();
+    if (timeout) {
+      this.timeout = setTimeout(() => this.audio.pause(), timeout * 1000);
+    }
+  }
+  showEventMessage(text: string) {
+    this.eventMessage = text;
+    setTimeout(() => {
+      this.eventMessage = undefined
+    }, 5000);
+  }
+  playEvent(ev: Event) {
+    if (ev.soundFile) {
+      if (this.timeout) clearTimeout(this.timeout);
+      this.audio.pause();
+      this.audio.src = ev.soundFile;
+      this.audio.load();
+      this.audio.play();
+    }
   }
 }

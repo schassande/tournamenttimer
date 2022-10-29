@@ -14,30 +14,45 @@
     display: inline-block;
 }
 
-.control-panel {
+.side-panel {
     vertical-align: top;
     display: inline-block;
     width: 250px;
-    padding: 10px;
     margin-left: 10px;
     border: 1px solid black;
+    margin-bottom: 20px;
 }
 
+.control-panel {}
+
 .control-panel-title {
+    background-color: lightgray;
+    border-bottom: 1px solid black;
     font-size: 1.3em;
     text-align: center;
+    padding: 10px 0;
     width: 100%;
 }
 
 .control-panel-message {
     text-align: center;
-    min-height: 30px;
+    border-bottom: 1px solid black;
+    height: 50px;
+    width: 100%;
+}
+
+.control-panel-time {
+    border-bottom: 1px solid black;
+    font-size: 1.5em;
+    text-align: center;
+    height: 50px;
     width: 100%;
 }
 
 .control-panel-buttons {
+    border-bottom: 1px solid black;
     text-align: center;
-    min-height: 50px;
+    height: 50px;
     width: 100%;
 }
 
@@ -47,10 +62,35 @@
     margin: 0 10px;
 }
 
+.control-panel-event-message {
+    border-bottom: 1px solid black;
+    text-align: center;
+    height: 50px;
+    width: 100%;
+}
+
+.control-panel-sound-events {
+    padding: 10px;
+    width: 100%;
+}
+
+
+/***************************************************************/
+
+
+/*************************** Entry  ****************************/
+
+
+/***************************************************************/
+
 .entry {
     border: 1px solid black;
     height: 75px;
     padding: 10px;
+}
+
+.entry-selected {
+    background-color: #7FBF3F;
 }
 
 mat-panel-title {
@@ -64,26 +104,26 @@ mat-panel-title {
     font-size: 1.5em;
 }
 
-.entry-selected {
-    background-color: #7FBF3F;
+.entry-name {
+    font-size: 1.1em;
+    text-align: center;
 }
 
 .entry-selected .entry-name {
     font-weight: bold;
 }
 
-.entry-name {
-    font-size: 1.1em;
+.entry-events-row {
     text-align: center;
 }
 
-.entry-time-row {}
+.entry-time-beginEvent,
+.entry-time-endEvent {
+    display: inline-block;
+    margin: 5px 10px;
+}
 
 .entry-icons {
     float: right;
     display: block;
 }
-
-.entry-time-beginEvent {}
-
-.entry-time-endEvent {}

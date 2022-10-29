@@ -7,7 +7,7 @@ import * as moment from 'moment';
 })
 export class TournamentService {
 
-  private tournaments: Tournament[] = [];
+  public tournaments: Tournament[] = [];
 
   private currentTournament: Tournament|undefined;
 
@@ -19,22 +19,25 @@ export class TournamentService {
     this.currentTournament = {
       id: '1',
       name: 'test',
-      days: [ { name: 'Day 1', day: new Date(), groups: [] } ],
+      days: [],
       events: [
-        {name: 'OneMinWarning',   soundFile: 'OneMinWarning.mp3', text: "One minute warning"},
-        {name: 'StartGame',       soundFile: 'hooter.mp3',        text: "Hooter Start Game"},
-        {name: 'EndFirstHalf',    soundFile: 'hooter.mp3',        text: "End of First Half"},
-        {name: 'StartSecondHalf', soundFile: 'hooter.mp3',        text: "Start of Second Half"},
-        {name: 'EndSecondHalf',   soundFile: 'hooter.mp3',        text: "End of Second Half"},
-        {name: 'StartDropOff',    soundFile: 'hooter.mp3',        text: "Start of drop off"},
-        {name: 'DropOff2min',     soundFile: 'hooter.mp3',        text: "Start of drop off"},
+        {name: 'OneMinWarning',   soundFile: 'assets/1min_warning.mp3', text: "One minute warning"},
+        {name: 'StartGame',       soundFile: 'assets/hooter.mp3',        text: "Hooter Start Game"},
+        {name: 'EndFirstHalf',    soundFile: 'assets/hooter.mp3',        text: "End of First Half"},
+        {name: 'StartSecondHalf', soundFile: 'assets/hooter.mp3',        text: "Start of Second Half"},
+        {name: 'EndSecondHalf',   soundFile: 'assets/hooter.mp3',        text: "End of Second Half"},
+        {name: 'StartDropOff',    soundFile: 'assets/hooter.mp3',        text: "Start of drop off"},
+        {name: 'DropOff2min',     soundFile: 'assets/hooter.mp3',        text: "Start of drop off"},
       ],
       owners: []
     };
-    let time = moment(this.currentTournament.days[0].day)
-      .hours(7).minutes(55).seconds(0).milliseconds(0).toDate();
-    for(let i=0; i<18; i++) {
-      time = this.addGame(this.currentTournament, this.currentTournament.days[0], time);
+    for(let j=0; j<3; j++) {
+      this.currentTournament.days.push({ name: 'Day ' + (j+1), day: moment(new Date()).add(j, 'day').toDate(), groups: [] });
+      let time = moment(this.currentTournament.days[j].day).hours(7).minutes(55).seconds(0).milliseconds(0).toDate();
+      const nbGames = (Math.random() * 8) + 8;
+      for(let i=0; i<nbGames; i++) {
+        time = this.addGame(this.currentTournament, this.currentTournament.days[j], time);
+      }
     }
   }
 
@@ -51,8 +54,8 @@ export class TournamentService {
     tournament.events.forEach(e => name2event.set(e.name, e));
     time = this.addGameEntry(name2event, group, day, time,  4, 'Pre match').endTime;
     time = this.addGameEntry(name2event, group, day, time,  1, 'Pre match - One Minute Warning', 'OneMinWarning', undefined).endTime;
-    time = this.addGameEntry(name2event, group, day, time, 20, 'First Half', 'StartGame', 'EndFirstHalf').endTime;
-    time = this.addGameEntry(name2event, group, day, time,  4, 'Break').endTime;
+    time = this.addGameEntry(name2event, group, day, time, 20, 'First Half', 'StartGame').endTime;
+    time = this.addGameEntry(name2event, group, day, time,  4, 'Break', 'EndFirstHalf').endTime;
     time = this.addGameEntry(name2event, group, day, time,  1, 'Break - One Minute Warning', 'OneMinWarning').endTime;
     time = this.addGameEntry(name2event, group, day, time, 20, 'Second Half', 'StartSecondHalf', 'EndSecondHalf').endTime;
     return time;
