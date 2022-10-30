@@ -1,0 +1,21 @@
+<div style="vertical-align: top;">
+    <div style=" width: 45%; display: inline-block;">
+        <mat-list>
+            <div style="display: inline-block;">List of events:</div>
+            <div style="float: right;">
+                <mat-icon (click)="newEvent()" [inline]="true" style="font-size: 1.8em; margin-right: 15px;">add</mat-icon>
+            </div>
+            <div style="clear: both; margin-top: 5px;"></div>
+            <mat-list-item *ngFor="let ev of events; index as idx" (click)="eventSelected(ev)" [ngClass]="{ 'event-selected' : ev.name === currentEvent?.name }">
+                <div style="width: 100%;">{{ev.name}}</div>
+                <div style="float: right;">
+                    <mat-icon (click)="deleteEvent(idx)" [inline]="true" style="font-size: 1.5em;">delete</mat-icon>
+                </div>
+            </mat-list-item>
+        </mat-list>
+    </div>
+    <div style="display: inline-block; vertical-align: top; width: 45%; padding-left: 40px;">
+        <app-event-editor [event]="currentEvent"></app-event-editor>
+
+    </div>
+</div>

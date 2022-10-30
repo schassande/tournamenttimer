@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { TournamentService } from '../tournament-service';
 import {DayEntry, Event, Tournament, TournamentDay } from '../tournament-model';
 import {MatExpansionPanel} from '@angular/material/expansion';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tournament-runner',
@@ -25,18 +27,29 @@ export class TournamentRunnerComponent implements OnInit {
   timeout: any;
   audio: HTMLAudioElement = new Audio();
   eventMessage: string|undefined;
+  mute = false;
 
-  constructor(private tournamentService: TournamentService) { }
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    private tournamentService: TournamentService) { }
 
   ngOnInit(): void {
-    console.log('TournamentRunnerComponent.ngOnInit()');
-    this.tournament = this.tournamentService.getCurrentTournament();
-    if (this.tournament) {
-      this.day = this.tournament.days[0];
-      this.computeGroupIndex();
-    } else {
-      console.log('No tournament')
-    }
+    this.route.paramMap.pipe(
+      map((params: ParamMap) => {
+        const tournamentId: string|null = params.get('tournamentId')
+        if (!tournamentId) {
+          this.router.navigateByUrl('/home');
+          return;
+        }
+        this.tournament = this.tournamentService.getTournament(tournamentId);
+        if (!this.tournament || this.tournament.days.length === 0) {
+          this.router.navigateByUrl('/home');
+          return;
+        }
+        this.day = this.tournament.days[0];
+        this.computeGroupIndex();  
+      })
+    ).subscribe();
   }
   computeGroupIndex() {
     if (this.day && this.day.groups && this.day.groups.length) {
@@ -174,7 +187,12 @@ export class TournamentRunnerComponent implements OnInit {
     if (this.timeout) clearTimeout(this.timeout);
     this.audio.pause();
   }
+  toggleMute() {
+    this.mute = !this.mute;
+    if (this.mute) this.stopAudio();
+  }
   playAudio(fileName: string, timeout: number|undefined = undefined) {
+    if (this.mute) return;
     this.stopAudio();
     this.audio.src = fileName;
     this.audio.load();

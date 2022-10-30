@@ -1,0 +1,10 @@
+.content {
+    padding: 10px;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.events {
+    width: 300px;
+    display: inline-block;
+}

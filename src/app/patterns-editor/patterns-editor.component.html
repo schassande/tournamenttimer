@@ -1,0 +1,14 @@
+<div style="vertical-align: top;">
+    <div>
+        <mat-form-field>
+            <mat-label>Pattern</mat-label>
+            <select matNativeControl required [(ngModel)]="currentPatternId" (change)="patternSelected()">
+                <option *ngFor="let pattern of patterns" [value]="pattern.id">{{pattern.name}}</option>
+            </select>
+        </mat-form-field>
+        <span (click)="newPattern()" style="margin-left: 20px;"><a>Add new pattern</a></span>
+    </div>
+    <div style="border: 1px solid lightgrey; margin: 10px; padding: 10px; vertical-align: top;" *ngIf="currentPattern">
+        <app-pattern-editor [pattern]="currentPattern" [events]="events" (onDelete)="deleteCurrentPattern()"></app-pattern-editor>
+    </div>
+</div>

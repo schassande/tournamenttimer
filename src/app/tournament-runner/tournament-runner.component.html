@@ -1,5 +1,6 @@
 <div *ngIf="tournament && day" class="content">
-    <div class="tournament-name">{{tournament.name}}</div>
+    <div style="float: right; margin-top: 20px;"><a routerLink="/home">Home</a></div>
+    <h1 class="tournament-name">{{tournament.name}}</h1>
     <div style="text-align: center;">
         <mat-form-field>
             <mat-select placeholder="Day" [value]="day" (valueChange)="dayChange($event)">
@@ -61,13 +62,14 @@
                 <div class="control-panel-title">
                     <span>Sound control</span>
                 </div>
-                <div>
+                <div style="text-align: center;">
                     <mat-icon (click)="stopAudio()" [inline]="true" style="font-size: 2em; margin: 5px; color: red;">stop</mat-icon>
-                    <span style="margin-left: 10px;">Stop sound:</span>
+                    <mat-icon (click)="toggleMute()" [inline]="true" style="font-size: 2em; margin: 5px;">
+                        {{ mute ? 'volume_off' : 'volume_up'}}</mat-icon>
                 </div>
-                <div *ngFor="let ev of tournament.events" (click)="playEvent(ev)">
-                    <mat-icon [inline]="true" *ngIf="ev.soundFile" style="font-size: 2em; margin: 0 5px;">play_arrow</mat-icon>
-                    <span style="margin-left: 10px;">{{ev.name}}</span>
+                <div *ngFor="let ev of tournament.events" (click)="playEvent(ev)" style="vertical-align: top; margin-bottom: 5px;">
+                    <mat-icon [inline]="true" *ngIf="ev.soundFile" style="font-size: 1.8em; margin: 0 5px;">play_arrow</mat-icon>
+                    <span style="margin-left: 10px; vertical-align: top;">{{ev.name}}</span>
                 </div>
             </div>
         </div>

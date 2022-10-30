@@ -1,0 +1,17 @@
+<div *ngIf="event">
+    <div>Edit event:</div>
+    <div style="padding: 20px;">
+        <mat-form-field style="width: 300px;">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Event name" value="" type="text" min="1" max="50" [(ngModel)]="event.name">
+        </mat-form-field>
+        <mat-form-field style="width: 300px;">
+            <mat-label>Sound file URL</mat-label>
+            <input matInput placeholder="Sound file URL" value="" type="text" min="1" max="200" [(ngModel)]="event.soundFile">
+        </mat-form-field>
+        <mat-form-field style="width: 300px;">
+            <mat-label>Event message</mat-label>
+            <input matInput placeholder="Event message" value="" type="text" min="1" max="200" [(ngModel)]="event.text">
+        </mat-form-field>
+    </div>
+</div>

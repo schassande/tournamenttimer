@@ -1,6 +1,28 @@
-<div style="text-align: center;">Tournament Time Manager</div>
+<div style="padding: 10px; width: 600px; margin: 10px auto;">
 
-<div>List of tournament:</div>
-<ul>
-    <li *ngFor="let tournament of tournaments">{{tournament.name}} </li>
-</ul>
+    <div style="text-align: center; font-size: 2em; margin-bottom: 40px;">
+        <h1>Tournament<br>Time Manager</h1>
+    </div>
+
+    <h2 *ngIf="tournaments.length > 0">List of tournament:</h2>
+    <ul>
+        <li *ngFor="let tournament of tournaments; index as idx">{{tournament.name}}
+            <span><a routerLink="/run/{{tournament.id}}">Run</a></span>&nbsp;
+            <span><a routerLink="/edit/{{tournament.id}}">Edit</a></span>&nbsp;
+            <span><input type="button" (click)="duplicate(tournament)" value="Duplicate"/></span>&nbsp;
+            <span><input type="button" (click)="deleteTournament(idx)" value="Delete"/></span>&nbsp;
+            <span><input type="button" (click)="exportTournament(tournament)" value="Export"/></span>
+        </li>
+    </ul>
+    <div style="text-align: center; margin-top: 40px;">
+        <div style="margin-bottom: 20px;"><a routerLink="/create">Create a new tournament</a></div>
+        <div>
+            Import tournament from file:
+            <span>
+                <input type="file" #inputFile accept="*.json" style="display: none;" (change)="importTournament($event)" />
+                <button (click)="loadFile()">Browse file</button>
+            </span>
+        </div>
+    </div>
+
+</div>

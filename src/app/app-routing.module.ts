@@ -6,9 +6,10 @@ import { TournamentRunnerComponent } from './tournament-runner/tournament-runner
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent},
-  { path: 'runner', component: TournamentRunnerComponent},
-  { path: 'editor', component: TournamentEditorComponent},
-  { path: '**', redirectTo:'/runner'}
+  { path: 'run/:tournamentId', component: TournamentRunnerComponent},
+  { path: 'edit/:tournamentId', component: TournamentEditorComponent},
+  { path: 'create', component: TournamentEditorComponent},
+  { path: '**', redirectTo:'/home'}
 ];
 
 @NgModule({
