@@ -43,4 +43,21 @@ export class TournamentEditorComponent implements OnInit {
   exportTournament() {
     
   }
+  nbDaysChanged(event: any) {
+    if (!this.tournament) return;
+    const newNbDay = event.srcElement.value;
+    let firstAdded = -1
+    while (newNbDay > this.tournament.days.length) {
+      if (firstAdded === -1) {
+        firstAdded = this.tournament.days.length
+      }
+      this.addDay();
+    }
+    while (newNbDay < this.tournament.days.length) {
+      this.deleteDay(newNbDay);
+    }
+    if (firstAdded !== -1) {
+      // TODO select the tab
+    }
+  }
 }

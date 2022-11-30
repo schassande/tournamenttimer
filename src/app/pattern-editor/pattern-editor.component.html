@@ -5,10 +5,9 @@
             <input matInput placeholder="Pattern name" type="text" [(ngModel)]="pattern.name">
         </mat-form-field>
         <mat-icon [inline]="true" style="font-size: 1.5em; float: right;" (click)="deletePattern()">delete</mat-icon>
-        <mat-form-field style="margin-left: 30px; width: 150px;">
-            <mat-label>Nb entry before official time</mat-label>
-            <input matInput placeholder="Pattern name" type="text" [(ngModel)]="pattern.nbEntryPreOfficialTime">
-        </mat-form-field>
+        <span>
+            Pattern duration: {{pattern.duration}}min
+        </span>
     </div>
     <div style=" width: 45%; display: inline-block;">
         <div>
@@ -19,7 +18,7 @@
             <div style="clear: both;"></div>
         </div>
         <mat-list>
-            <mat-list-item *ngFor="let entry of pattern.entries; index as idx" (click)="entrySelected(entry)" [ngClass]="{ 'entry-selected' : entry.name === currentEntry?.name }">
+            <mat-list-item *ngFor="let entry of pattern.entries; index as idx" (click)="entrySelected(entry, idx)" [ngClass]="{ 'entry-selected' : entry.name === currentEntry?.name }">
                 <div style="width: 100%;">{{entry.name}}</div>
                 <div style="float: right;">
                     <mat-icon (click)="deleteEntry(idx)" [inline]="true" style="font-size: 1.5em;">delete</mat-icon>
@@ -29,28 +28,38 @@
         </mat-list>
     </div>
     <div style="display: inline-block; vertical-align: top; width: 45%; padding-left: 40px;" *ngIf="currentEntry">
-        <mat-form-field>
-            <mat-label>Name</mat-label>
-            <input matInput placeholder="Name" type="text" min="1" max="50" required="true" [(ngModel)]="currentEntry.name">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Duration (min)</mat-label>
-            <input matInput placeholder="Duration in minutes" type="number" min="1" max="120" required="true" [(ngModel)]="currentEntry.duration">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Begin event</mat-label>
-            <select matNativeControl required [(ngModel)]="currentEntry.beginEvent" (change)="beginEventChanged()">
+        <div>
+            <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input matInput placeholder="Name" type="text" min="1" max="50" required="true" [(ngModel)]="currentEntry.name">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>Duration (min)</mat-label>
+                <input matInput placeholder="Duration in minutes" type="number" min="1" max="120" required="true" [(ngModel)]="currentEntry.duration" (ngModelChange)="entryDurationChanged()">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>Begin event</mat-label>
+                <select matNativeControl required [(ngModel)]="currentEntry.beginEvent" (change)="beginEventChanged()">
                 <option [value]="undefined">None</option>
                 <option *ngFor="let event of events" [value]="event">{{event.name}}</option>
             </select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>End event</mat-label>
-            <select matNativeControl required [(ngModel)]="currentEntry.endEvent" (change)="endEventChanged()">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>End event</mat-label>
+                <select matNativeControl required [(ngModel)]="currentEntry.endEvent" (change)="endEventChanged()">
                 <option [value]="undefined">None</option>
                 <option *ngFor="let event of events" [value]="event">{{event.name}}</option>
             </select>
-        </mat-form-field>
-
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-checkbox matNativeControl [checked]="pattern.nbEntryPreOfficialTime === currentEntryIdx" (change)="setCurrentEntryAsOfficialStartTime()">Official start time</mat-checkbox>
+        </div>
     </div>
 </div>

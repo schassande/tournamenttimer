@@ -13,6 +13,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatTabsModule} from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
 import { TournamentEditorComponent } from './tournament-editor/tournament-editor.component';
 import { HomeComponent } from './home/home.component';
@@ -40,12 +42,14 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MatCheckboxModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatListModule,
     MatSelectModule,
+    MatTabsModule,
     NgxMaterialTimepickerModule,
     ScrollingModule
   ],

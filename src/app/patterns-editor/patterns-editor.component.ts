@@ -29,7 +29,12 @@ export class PatternsEditorComponent implements OnInit {
     this.currentPattern = this.tournamentService.createPattern(this.patterns);
     this.currentPatternId = this.currentPattern.id;
   }
-
+  duplicatePattern() {
+    if (this.currentPattern) {
+      this.currentPattern = this.tournamentService.duplicatePattern(this.currentPattern, this.patterns);
+      this.currentPatternId = this.currentPattern.id;
+    }
+  }
   deleteCurrentPattern() {
     const idx = this.patterns.findIndex(p => p.id === this.currentPatternId);
     if (idx >= 0) {

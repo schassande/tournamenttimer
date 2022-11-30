@@ -1,10 +1,15 @@
 .content {
     padding: 10px;
-    width: 800px;
+    width: 1024px;
     margin: 0 auto;
 }
 
-.events {
-    width: 300px;
-    display: inline-block;
+.mat-tab-header {
+    padding: 0 10px !important;
+    min-width: 80px !important;
+}
+
+.days-tab .mat-tab-label {
+    padding: 0 10px !important;
+    min-width: 80px !important;
 }

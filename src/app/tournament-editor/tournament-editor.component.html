@@ -5,37 +5,36 @@
         <mat-label>Tournament name</mat-label>
         <input matInput placeholder="Tournament name" value="" type="text" [(ngModel)]="tournament.name">
     </mat-form-field>
-    <mat-accordion multi="false">
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Events</mat-panel-title>
-            </mat-expansion-panel-header>
-            <app-events-editor [events]="tournament.events"></app-events-editor>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Patterns</mat-panel-title>
-            </mat-expansion-panel-header>
-            <app-patterns-editor [patterns]="tournament.patterns" [events]="tournament.events"></app-patterns-editor>
-        </mat-expansion-panel>
-    </mat-accordion>
-    <div style="margin: 20px 0;">
-        <div style="font-weight: bold; width: 45%; display: inline-block; padding-left: 10px;">List of days:</div>
-        <div (click)="addDay()" style="display: inline-block; text-align: right; width: 50%;">
-            <a>Add a new day</a>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-    <mat-accordion multi="false">
-        <mat-expansion-panel *ngFor="let day of tournament.days; index as dayIdx" class="day">
-            <mat-expansion-panel-header>
-                <mat-panel-title>{{ day.name }}</mat-panel-title>
-                <span style="margin-right: 40px; font-size: 2em;">
-                    <mat-icon (click)="deleteDay(dayIdx)">delete</mat-icon>
-                </span>
-            </mat-expansion-panel-header>
-            <app-day-editor [day]="day" [patterns]="tournament.patterns"></app-day-editor>
-        </mat-expansion-panel>
-    </mat-accordion>
+    <mat-form-field>
+        <mat-label>Nb days</mat-label>
+        <input matInput placeholder="Number of days" type="number" min="1" max="5" required="true" [value]="tournament.days.length" (change)="nbDaysChanged($event)">
+    </mat-form-field>
+    <mat-tab-group dynamicHeight>
+        <mat-tab>
+            <ng-template mat-tab-label>Events</ng-template>
+            <div style="padding: 5px;">
+                <app-events-editor [events]="tournament.events"></app-events-editor>
+            </div>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>Patterns</ng-template>
+            <div style="padding: 5px;">
+                <app-patterns-editor [patterns]="tournament.patterns" [events]="tournament.events"></app-patterns-editor>
+            </div>
+        </mat-tab>
+        <mat-tab *ngFor="let day of tournament.days; index as dayIdx" class="days-tab">
+            <ng-template mat-tab-label>
+                <div>{{day.name}}</div>
 
+            </ng-template>
+            <div style="padding: 10px; vertical-align: top;">
+                <div style="width: 80%; display: inline-block;">
+                    <app-day-editor [day]="day" [patterns]="tournament.patterns"></app-day-editor>
+                </div>
+                <div style=" display: inline-block;  vertical-align: top; margin-right: 10px; font-size: 2em;">
+                    <mat-icon (click)="deleteDay(dayIdx)">delete</mat-icon>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </div>

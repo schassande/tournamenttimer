@@ -16,6 +16,7 @@ export interface TournamentDay {
 export interface DayEntryGroup {
     order?: number;
     groupName: string;
+    officialTime: string;
     pattern: Pattern;
     entries: DayEntry[];
 }
@@ -37,6 +38,7 @@ export interface Pattern {
     groupNamePrefix: string;
     entries: PatternEntry[];
     nbEntryPreOfficialTime: number;
+    duration: number;
 }
 
 export interface PatternEntry {

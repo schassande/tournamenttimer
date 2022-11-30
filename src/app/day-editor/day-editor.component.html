@@ -11,35 +11,22 @@
         </mat-form-field>
     </div>
     <div style="margin: 20px 0;">
-        <div style="font-weight: bold; width: 45%; display: inline-block;">List of time slots:</div>
-        <div (click)="addTimeSlot()" style="display: inline-block; text-align: right; width: 50%;">
-            <a>Add a time slot</a>
-        </div>
-        <div style="clear: both;"></div>
+        <span style="font-weight: bold; ">List of time slots:</span>
+        <mat-icon (click)="addTimeSlot()" style="font-size: 1.5em; margin-left: 20px;">add_circle_outline</mat-icon>
     </div>
     <mat-list>
         <mat-list-item *ngFor="let group of day.groups; index as idx">
             <div style="width: 100%;">
-                <mat-form-field>
-                    <mat-label>Name</mat-label>
-                    <input matInput placeholder="Group name" value="" type="text" min="1" max="20" [(ngModel)]="group.groupName">
-                </mat-form-field>
-                <mat-form-field style="margin-left: 30px;">
+                <span>{{group.officialTime}}</span>
+                <mat-form-field style="margin-left: 20px;">
                     <mat-label>Pattern</mat-label>
-                    <select matNativeControl required [value]="group.pattern.id" (change)="patternChanged(idx, $event)">
-                        <option *ngFor="let pattern of patterns" [value]="pattern.id">{{pattern.name}}</option>
-                    </select>
+                    <mat-select [value]="group.pattern.id" (selectionChange)="patternChanged(idx, $event.value)">
+                        <mat-option *ngFor="let pattern of patterns" [value]="pattern.id">{{pattern.name}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
-                <mat-form-field id="open-timeslot-input" style="margin-left: 30px; width: 100px;">
-                    <mat-label>Game time</mat-label>
-                    <input matInput placeholder="Group time" [ngxTimepicker]="fullTime" [format]="24" type="text" [value]="getGroupTime(group)" style="text-align: center; width: 100%;">
-                    <ngx-material-timepicker #fullTime [minutesGap]="5" (timeChanged)="setGroupTime(idx, $event)" style="display: none;"></ngx-material-timepicker>
-                </mat-form-field>
+                <mat-icon (click)="addTimeSlot(idx+1)" style="font-size: 1.5em; margin-left: 20px;">add_circle_outline</mat-icon>
+                <mat-icon *ngIf="day.groups.length > 1" (click)="deleteGroup(idx)" style="font-size: 1.5em; margin-left: 20px;">delete</mat-icon>
             </div>
-            <div>
-                <mat-icon (click)="deleteGroup(idx)" [inline]="true" style="font-size: 1.5em;">delete</mat-icon>
-            </div>
-            <div style="clear: both;"></div>
         </mat-list-item>
     </mat-list>
 </div>

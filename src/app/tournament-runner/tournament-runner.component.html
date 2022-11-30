@@ -1,7 +1,7 @@
 <div *ngIf="tournament && day" class="content">
     <div style="float: right; margin-top: 20px;"><a routerLink="/home">Home</a></div>
     <h1 class="tournament-name">{{tournament.name}}</h1>
-    <div style="text-align: center;">
+    <div style="text-align: center;" *ngIf="tournament.days.length > 1">
         <mat-form-field>
             <mat-select placeholder="Day" [value]="day" (valueChange)="dayChange($event)">
                 <mat-option *ngFor="let d of tournament.days" [value]="d">

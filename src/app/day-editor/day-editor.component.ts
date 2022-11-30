@@ -8,27 +8,28 @@ import { TournamentService } from '../tournament-service';
   templateUrl: './day-editor.component.html',
   styleUrls: ['./day-editor.component.css']
 })
-export class DayEditorComponent implements OnInit {
+export class DayEditorComponent {
   
   @Input() day: TournamentDay|undefined;
   @Input() patterns: Pattern[] = [];
 
   constructor(private tournamentService: TournamentService) {}
 
-  ngOnInit(): void {
-  }
-
   deleteGroup(idx: number) {
-    console.log('deleteGroup: ', this.day?.groups[0]);
-    this.day?.groups.splice(idx, 1);
+    if (!this.day) return;
+    this.day.groups.splice(idx, 1);
+    this.tournamentService.recomputeAllTimes(this.day);    
   }
 
-  patternChanged(groupIdx: number, event: any) {
+  patternChanged(groupIdx: number, patternId: string) {
     if (!this.day) return;
     const group = this.day.groups[groupIdx];
-    group.pattern = this.patterns[event.target.selectedIndex];
-    this.tournamentService.rebuildEntriesFromPattern(group);
-    this.recomputeTimes(groupIdx, this.getOfficialTime(groupIdx));    
+    const newPattern = this.patterns.find(p => p.id === patternId);
+    if (newPattern) {
+      group.pattern = newPattern;
+      this.tournamentService.rebuildEntriesFromPattern(group);
+      this.tournamentService.recomputeAllTimes(this.day);    
+    }
   }
 
   getFirstTime(): string {
@@ -38,59 +39,19 @@ export class DayEditorComponent implements OnInit {
   setFirstTime(val: string) {
     if (!this.day) return;
     this.day.firstTimeSlot = this.parse(val);
-    this.recomputeTimes(0, this.parse(val));
+    this.tournamentService.recomputeAllTimes(this.day);
   }
 
-  getGroupTime(group: DayEntryGroup) {
-    const delay = group.pattern.entries.map(e => e.duration)
-      .reduce((prev, cur, idx) => idx < group.pattern.nbEntryPreOfficialTime ? prev + cur : prev);
-    return moment(group.entries[0].beginTime).add(delay, 'minutes').format('HH:mm');
-  }
-
-  setGroupTime(groupIdx: number, timeSlot: string) {
-    this.recomputeTimes(groupIdx, this.parse(timeSlot));
-  }
-
-  addTimeSlot() {
+  addTimeSlot(pos: number = -1) {
     if (!this.day) return;
-    const pattern = this.day.groups.length > 0 ? this.day.groups[this.day.groups.length-1].pattern : this.patterns[0];
-    this.tournamentService.addGroupFromPattern(this.day, pattern);
-  }
-
-  private recomputeTimes(groupIdx: number, newOfficialTime: Date): boolean {
-    if (!this.day) return false;
-    if (groupIdx > 0) {
-      // check the new official time is compatible with previous slot
-      const group = this.day.groups[groupIdx];
-      const previousGroup = this.day.groups[groupIdx - 1];
-      const newBeginTime = moment(newOfficialTime).add(-this.getPreOfficialTimeDuration(group), 'minutes');
-      const previousSlotEndTime = moment(previousGroup.entries[previousGroup.entries.length - 1].endTime);
-      if (newBeginTime.isBefore(previousSlotEndTime)) {
-          console.log('newBeginTime=' + newBeginTime.toDate())
-          console.log('previousSlotEndTime=' + previousSlotEndTime.toDate())
-          return false;
-      }
+    if (pos === -1) {
+      pos = this.day.groups.length;
     }
-    let previousEndTime: Date;
-    for(let idx = groupIdx; idx < this.day.groups.length; idx++) {
-      let group = this.day.groups[idx];
-      if (groupIdx === idx) {
-        // first group to recompute
-        if (idx === 0) {
-        // first group of the day
-        this.day.firstTimeSlot = newOfficialTime;
-        }
-        const delay = this.getPreOfficialTimeDuration(group);
-        previousEndTime = moment(newOfficialTime).add(-delay, 'minutes').toDate();
-      }
-      group.entries.forEach(entry => {
-        entry.beginTime = previousEndTime;
-        entry.endTime = moment(entry.beginTime).add(entry.duration, 'minutes').toDate();
-        previousEndTime = entry.endTime;
-      });
-      group.groupName = this.tournamentService.computeGroupName(group.pattern, this.getOfficialTime(idx));
-    }
-    return true;
+    const pattern = this.day.groups.length === 0 
+      ? this.patterns[0] 
+      : (pos > 0 ? this.day.groups[pos-1].pattern : this.day.groups[pos].pattern);
+    this.tournamentService.addGroupFromPattern(this.day, pattern, pos);
+    this.tournamentService.recomputeAllTimes(this.day);
   }
 
   private parse(str: string): Date {
@@ -100,16 +61,12 @@ export class DayEditorComponent implements OnInit {
       .minutes(Number.parseInt(parts[1], 10))
       .toDate()
   }
-
-  private getOfficialTime(groupIdx: number): Date {
+  getOfficialTime(groupIdx: number): Date {
     if (!this.day) return new Date();
-    const group = this.day.groups[groupIdx];
-    const delay = this.getPreOfficialTimeDuration(group);
-    return moment(group.entries[0].beginTime).add(delay, 'minutes').toDate();
+    return this.tournamentService.getOfficialTime(this.day, groupIdx);
   }
 
-  private getPreOfficialTimeDuration(group: DayEntryGroup): number {
-    return group.entries.map(e => e.duration)
-      .reduce((prev, cur, idx) => idx < group.pattern.nbEntryPreOfficialTime ? prev + cur : prev);
+  getPreOfficialTimeDuration(group: DayEntryGroup): number {
+    return this.tournamentService.getPreOfficialTimeDuration(group);
   }
 }
